@@ -15,9 +15,8 @@ import { UpdateExperimentBranchesInput } from "../../types/globalTypes";
 import { updateExperimentBranches_updateExperimentBranches as UpdateExperimentBranchesResult } from "../../types/updateExperimentBranches";
 import { getExperiment_experimentBySlug } from "../../types/getExperiment";
 
-// TODO: find this doco URL
-const BRANCHES_DOC_URL =
-  "https://mana.mozilla.org/wiki/pages/viewpage.action?spaceKey=FJT&title=Project+Nimbus";
+export const BRANCHES_DOC_URL =
+  "https://docs.google.com/document/d/155EUgzn22VTX8mFwesSROT3Z6JORSfb5VyoMoLra7ws/";
 
 export const SUBMIT_ERROR_MESSAGE = "Save failed, no error available";
 
@@ -92,7 +91,9 @@ const PageEditBranches: React.FunctionComponent<RouteComponentProps> = () => {
               If you want, you can add a <strong>feature flag</strong>{" "}
               configuration to each branch. Experiments can only change one flag
               at a time.{" "}
-              <LinkExternal href={BRANCHES_DOC_URL}>Learn more</LinkExternal>
+              <LinkExternal href={BRANCHES_DOC_URL} data-testid="learn-more">
+                Learn more
+              </LinkExternal>
             </p>
             <FormBranches
               {...{

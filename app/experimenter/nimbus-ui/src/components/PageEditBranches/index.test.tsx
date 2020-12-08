@@ -11,7 +11,7 @@ import {
   act,
 } from "@testing-library/react";
 import { navigate } from "@reach/router";
-import PageEditBranches, { SUBMIT_ERROR_MESSAGE } from ".";
+import PageEditBranches, { SUBMIT_ERROR_MESSAGE, BRANCHES_DOC_URL } from ".";
 import FormBranches from "../FormBranches";
 import { RouterSlugProvider } from "../../lib/test-utils";
 import { mockExperimentQuery, MOCK_CONFIG } from "../../lib/mocks";
@@ -48,6 +48,10 @@ describe("PageEditBranches", () => {
       const { slug } = feature!;
       expect(screen.getByText(slug)).toBeInTheDocument();
     }
+    expect(screen.getByTestId("learn-more")).toHaveAttribute(
+      "href",
+      BRANCHES_DOC_URL,
+    );
   });
 
   it("handles onNext from FormBranches", async () => {
@@ -72,8 +76,8 @@ describe("PageEditBranches", () => {
       expect(screen.getByTestId("PageEditBranches")).toBeInTheDocument();
     });
     await act(async () => {
-      const saveButton = await screen.getByTestId("save-button");
-      await fireEvent.click(saveButton);
+      const saveButton = screen.getByTestId("save-button");
+      fireEvent.click(saveButton);
     });
     expect(mockSetSubmitErrors).not.toHaveBeenCalled();
   });
@@ -95,8 +99,8 @@ describe("PageEditBranches", () => {
     });
 
     await act(async () => {
-      const saveButton = await screen.getByTestId("save-button");
-      await fireEvent.click(saveButton);
+      const saveButton = screen.getByTestId("save-button");
+      fireEvent.click(saveButton);
     });
 
     expect(mockSetSubmitErrors).toHaveBeenCalledWith({
@@ -125,8 +129,8 @@ describe("PageEditBranches", () => {
     });
 
     await act(async () => {
-      const saveButton = await screen.getByTestId("save-button");
-      await fireEvent.click(saveButton);
+      const saveButton = screen.getByTestId("save-button");
+      fireEvent.click(saveButton);
     });
 
     expect(mockSetSubmitErrors).toHaveBeenCalledWith(

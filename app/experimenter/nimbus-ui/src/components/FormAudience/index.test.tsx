@@ -11,6 +11,7 @@ import {
   act,
 } from "@testing-library/react";
 import selectEvent from "react-select-event";
+import { AUDIENCE_DOC_URL } from ".";
 import { Subject, MOCK_EXPERIMENT } from "./mocks";
 import { MOCK_CONFIG } from "../../lib/mocks";
 
@@ -24,6 +25,10 @@ describe("FormAudience", () => {
     expect(targetingConfigSlug).toBeInTheDocument();
     expect((targetingConfigSlug as HTMLSelectElement).value).toEqual(
       MOCK_CONFIG!.targetingConfigSlug![0]!.value,
+    );
+    expect(screen.getByTestId("learn-more")).toHaveAttribute(
+      "href",
+      AUDIENCE_DOC_URL,
     );
   });
 
