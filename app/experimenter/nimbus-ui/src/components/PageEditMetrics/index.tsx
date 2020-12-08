@@ -69,7 +69,7 @@ const PageEditMetrics: React.FunctionComponent<RouteComponentProps> = () => {
   );
 
   const onNext = useCallback(() => {
-    navigate(`audience`);
+    navigate("audience");
   }, []);
 
   return (
@@ -95,7 +95,6 @@ const PageEditMetrics: React.FunctionComponent<RouteComponentProps> = () => {
                 isLoading: loading,
                 isServerValid,
                 submitErrors,
-                /* TODO: EXP-505 for accepting and saving edits to branches */
                 onSave,
                 onNext,
               }}

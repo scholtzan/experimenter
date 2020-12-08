@@ -38,6 +38,13 @@ describe("FormMetrics", () => {
     await act(async () =>
       expect(screen.getByTestId("FormMetrics")).toBeInTheDocument(),
     );
+
+    expect(
+      screen.queryByTestId("tooltip-primary-probe-sets"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("tooltip-secondary-probe-sets"),
+    ).toBeInTheDocument();
   });
 
   it("calls onNext when next clicked", async () => {

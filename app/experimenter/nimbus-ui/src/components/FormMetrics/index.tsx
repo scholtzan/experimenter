@@ -6,10 +6,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
+import ReactTooltip from "react-tooltip";
 import { getExperiment } from "../../types/getExperiment";
 import { getConfig_nimbusConfig_probeSets } from "../../types/getConfig";
 import { useExitWarning } from "../../hooks";
 import Select, { ActionMeta, ValueType } from "react-select";
+import { ReactComponent as Info } from "../../images/info.svg";
 
 type SelectOption = { label: string; value: string };
 
@@ -132,7 +134,17 @@ const FormMetrics = ({
         controlId="selectedPrimaryProbeSetIds"
         data-testid="primary-probe-sets"
       >
-        <Form.Label>Primary Probe sets</Form.Label>
+        <Form.Label>
+          Primary Probe sets{" "}
+          <Info
+            data-tip="Primary probe sets info here"
+            data-testid="tooltip-primary-probe-sets"
+            width="20"
+            height="20"
+            className="ml-1"
+          />
+          <ReactTooltip />
+        </Form.Label>
         <Select
           options={primaryProbeSetOptions}
           defaultValue={experiment?.primaryProbeSets?.map((p) => ({
@@ -158,7 +170,16 @@ const FormMetrics = ({
         controlId="selectedSecondaryProbeSetsIds"
         data-testid="secondary-probe-sets"
       >
-        <Form.Label>Secondary Probe sets</Form.Label>
+        <Form.Label>
+          Secondary Probe sets{" "}
+          <Info
+            data-tip="Secondary probe sets info here"
+            data-testid="tooltip-secondary-probe-sets"
+            width="20"
+            height="20"
+            className="ml-1"
+          />
+        </Form.Label>
         <Select
           options={secondaryProbeSetOptions}
           defaultValue={experiment?.secondaryProbeSets?.map((p) => ({
