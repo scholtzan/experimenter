@@ -3,51 +3,102 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
-import { getExperiment } from "../../types/getExperiment";
-import { getConfig_nimbusConfig_probeSets } from "../../types/getConfig";
-import { useExitWarning } from "../../hooks";
-import Select, { ActionMeta, ValueType } from "react-select";
+import {
+  getExperiment,
+  getExperiment_experimentBySlug_primaryProbeSets,
+  getExperiment_experimentBySlug_secondaryProbeSets,
+} from "../../types/getExperiment";
+import { useCommonForm, useConfig, useExitWarning } from "../../hooks";
+import { SelectOption } from "../../hooks/useCommonForm";
 
-type SelectOption = { label: string; value: string };
+import Select from "react-select";
 
 type FormMetricsProps = {
   experiment: getExperiment["experimentBySlug"];
-  probeSets: (getConfig_nimbusConfig_probeSets | null)[] | null;
   isLoading: boolean;
   isServerValid: boolean;
   submitErrors: Record<string, string[]>;
+  setSubmitErrors: React.Dispatch<React.SetStateAction<Record<string, any>>>;
   onSave: (data: Record<string, any>, reset: Function) => void;
   onNext: (ev: React.FormEvent) => void;
 };
 
+type ProbeSet =
+  | getExperiment_experimentBySlug_primaryProbeSets
+  | getExperiment_experimentBySlug_secondaryProbeSets;
+
+type ProbeSets =
+  | (getExperiment_experimentBySlug_primaryProbeSets | null)[]
+  | (getExperiment_experimentBySlug_secondaryProbeSets | null)[];
+
 const FormMetrics = ({
   experiment,
-  probeSets,
   isLoading,
   isServerValid,
   submitErrors,
+  setSubmitErrors,
   onSave,
   onNext,
 }: FormMetricsProps) => {
-  const { handleSubmit, reset, formState } = useForm({
-    mode: "onTouched",
-  });
-  const { isSubmitted, isDirty } = formState;
-  const [selectedPrimaryProbeSetIds, setSelectedPrimaryProbeSetIds] = useState<
-    string[]
-  >(experiment?.primaryProbeSets?.map((p) => p?.id as string) || []);
-  const [
-    selectedSecondaryProbeSetsIds,
-    setselectedSecondaryProbeSetsIds,
-  ] = useState<string[]>(
-    experiment?.secondaryProbeSets?.map((p) => p?.id as string) || [],
+  const { probeSets } = useConfig();
+
+  const getProbeSetIds = (probeSets: ProbeSets) =>
+    probeSets?.map((probeSet) => probeSet?.id as string) || [];
+
+  // We must alter primary probe set options when a secondary set is selected
+  // to exclude the set from primary probe set options and vice versa
+  const [primaryProbeSetIds, setPrimaryProbeSetIds] = useState<string[]>(
+    getProbeSetIds(experiment?.primaryProbeSets!),
+  );
+  const [secondaryProbeSetIds, setSecondaryProbeSetIds] = useState<string[]>(
+    getProbeSetIds(experiment?.secondaryProbeSets!),
   );
 
-  const isValid = isServerValid && formState.isValid;
-  const isDirtyUnsaved = isDirty && !(isValid && isSubmitted);
+  const probeSetOption = (probeSet: ProbeSet) => ({
+    label: probeSet.name,
+    value: probeSet.id,
+  });
+
+  const primaryProbeSetOptions: SelectOption[] = [];
+  const secondaryProbeSetOptions: SelectOption[] = [];
+
+  // Get primary/secondary options from server-supplied array of probe sets
+  probeSets?.forEach((probeSet) => {
+    if (!secondaryProbeSetIds.includes(probeSet!.id)) {
+      primaryProbeSetOptions.push(probeSetOption(probeSet!));
+    }
+    if (!primaryProbeSetIds.includes(probeSet!.id)) {
+      secondaryProbeSetOptions.push(probeSetOption(probeSet!));
+    }
+  });
+
+  const defaultValues = {
+    primaryProbeSetIds:
+      experiment?.primaryProbeSets?.map((probeSet) =>
+        probeSetOption(probeSet!),
+      ) || "",
+    secondaryProbeSetIds:
+      experiment?.secondaryProbeSets?.map((probeSet) =>
+        probeSetOption(probeSet!),
+      ) || "",
+  };
+
+  const {
+    FormErrors,
+    formSelectAttrs,
+    isValid,
+    isDirtyUnsaved,
+    handleSubmit,
+    reset,
+    isSubmitted,
+  } = useCommonForm(
+    defaultValues,
+    isServerValid,
+    submitErrors,
+    setSubmitErrors,
+  );
 
   const shouldWarnOnExit = useExitWarning();
   useEffect(() => {
@@ -58,18 +109,12 @@ const FormMetrics = ({
     if (isLoading) return;
     onSave(
       {
-        primaryProbeSetIds: selectedPrimaryProbeSetIds,
-        secondaryProbeSetIds: selectedSecondaryProbeSetsIds,
+        primaryProbeSetIds,
+        secondaryProbeSetIds,
       },
       reset,
     );
-  }, [
-    isLoading,
-    onSave,
-    reset,
-    selectedPrimaryProbeSetIds,
-    selectedSecondaryProbeSetsIds,
-  ]);
+  }, [isLoading, onSave, reset, primaryProbeSetIds, secondaryProbeSetIds]);
 
   const handleNext = useCallback(
     (ev: React.FormEvent) => {
@@ -78,42 +123,6 @@ const FormMetrics = ({
     },
     [onNext],
   );
-
-  const handlePrimaryProbeSetsChange = (
-    selectedOptions: SelectOption[] | null,
-  ) => {
-    const probeSetIds = selectedOptions?.map((option) => option?.value) || [];
-    setSelectedPrimaryProbeSetIds(probeSetIds);
-  };
-
-  const handleSecondaryProbeSetsChange = (
-    selectedOptions: SelectOption[] | null,
-  ) => {
-    const probeSetIds = selectedOptions?.map((option) => option?.value) || [];
-    setselectedSecondaryProbeSetsIds(probeSetIds);
-  };
-
-  const primaryProbeSetOptions: SelectOption[] = [];
-  const secondaryProbeSetOptions: SelectOption[] = [];
-
-  if (probeSets) {
-    for (const probeSet of probeSets) {
-      if (probeSet) {
-        if (!selectedSecondaryProbeSetsIds.includes(probeSet.id)) {
-          primaryProbeSetOptions.push({
-            label: probeSet.name,
-            value: probeSet.id,
-          });
-        }
-        if (!selectedPrimaryProbeSetIds.includes(probeSet.id)) {
-          secondaryProbeSetOptions.push({
-            label: probeSet.name,
-            value: probeSet.id,
-          });
-        }
-      }
-    }
-  }
 
   return (
     <Form
@@ -129,54 +138,38 @@ const FormMetrics = ({
       )}
 
       <Form.Group
-        controlId="selectedPrimaryProbeSetIds"
+        controlId="primaryProbeSetIds"
         data-testid="primary-probe-sets"
       >
         <Form.Label>Primary Probe sets</Form.Label>
         <Select
-          options={primaryProbeSetOptions}
-          defaultValue={experiment?.primaryProbeSets?.map((p) => ({
-            label: p?.name as string,
-            value: p?.id as string,
-          }))}
-          onChange={
-            handlePrimaryProbeSetsChange as (
-              value: ValueType<SelectOption, true>,
-              actionMeta: ActionMeta<SelectOption>,
-            ) => void
-          }
-          isOptionDisabled={() => selectedPrimaryProbeSetIds.length >= 2}
           isMulti
+          {...formSelectAttrs("primaryProbeSetIds", setPrimaryProbeSetIds)}
+          options={primaryProbeSetOptions}
+          isOptionDisabled={() => primaryProbeSetIds.length >= 2}
         />
         <Form.Text className="text-muted">
           Select the user action or feature that you are measuring with this
           experiment. You may select up to 2 primary probe sets.
         </Form.Text>
+        <FormErrors name="primaryProbeSetIds" />
       </Form.Group>
 
       <Form.Group
-        controlId="selectedSecondaryProbeSetsIds"
+        controlId="secondaryProbeSetIds"
         data-testid="secondary-probe-sets"
       >
         <Form.Label>Secondary Probe sets</Form.Label>
         <Select
-          options={secondaryProbeSetOptions}
-          defaultValue={experiment?.secondaryProbeSets?.map((p) => ({
-            label: p?.name as string,
-            value: p?.id as string,
-          }))}
-          onChange={
-            handleSecondaryProbeSetsChange as (
-              value: ValueType<SelectOption, true>,
-              actionMeta: ActionMeta<SelectOption>,
-            ) => void
-          }
           isMulti
+          {...formSelectAttrs("secondaryProbeSetIds", setSecondaryProbeSetIds)}
+          options={secondaryProbeSetOptions}
         />
         <Form.Text className="text-muted">
           Select the user action or feature that you are measuring with this
           experiment.
         </Form.Text>
+        <FormErrors name="secondaryProbeSetIds" />
       </Form.Group>
 
       <div className="d-flex flex-row-reverse bd-highlight">

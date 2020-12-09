@@ -11,14 +11,11 @@ import { SUBMIT_ERROR } from "../../lib/constants";
 import { UPDATE_EXPERIMENT_PROBESETS_MUTATION } from "../../gql/experiments";
 import { updateExperimentProbeSets_updateExperimentProbeSets as UpdateExperimentProbeSetsResult } from "../../types/updateExperimentProbeSets";
 import { UpdateExperimentProbeSetsInput } from "../../types/globalTypes";
-import { useConfig } from "../../hooks/useConfig";
 import AppLayoutWithExperiment from "../AppLayoutWithExperiment";
 import FormMetrics from "../FormMetrics";
 import LinkExternal from "../LinkExternal";
 
 const PageEditMetrics: React.FunctionComponent<RouteComponentProps> = () => {
-  const { probeSets } = useConfig();
-
   const [updateExperimentProbeSets, { loading }] = useMutation<
     { updateExperimentProbeSets: UpdateExperimentProbeSetsResult },
     { input: UpdateExperimentProbeSetsInput }
@@ -69,7 +66,7 @@ const PageEditMetrics: React.FunctionComponent<RouteComponentProps> = () => {
   );
 
   const onNext = useCallback(() => {
-    navigate(`audience`);
+    navigate("audience");
   }, []);
 
   return (
@@ -90,10 +87,10 @@ const PageEditMetrics: React.FunctionComponent<RouteComponentProps> = () => {
             <FormMetrics
               {...{
                 experiment,
-                probeSets,
                 isLoading: loading,
                 isServerValid,
                 submitErrors,
+                setSubmitErrors,
                 onSave,
                 onNext,
               }}

@@ -4,35 +4,10 @@
 
 import React from "react";
 import { render, screen, act, fireEvent } from "@testing-library/react";
-import { mockExperimentQuery } from "../../lib/mocks";
+import { mockExperimentQuery, MOCK_CONFIG } from "../../lib/mocks";
 import { Subject } from "./mocks";
-import { getConfig_nimbusConfig_probeSets } from "../../types/getConfig";
 
 describe("FormMetrics", () => {
-  const probeSets: getConfig_nimbusConfig_probeSets[] = [
-    {
-      __typename: "NimbusProbeSetType",
-      id: "1",
-      name: "Probe Set A",
-      slug: "probe-set-a",
-      probes: [],
-    },
-    {
-      __typename: "NimbusProbeSetType",
-      id: "2",
-      name: "Probe Set B",
-      slug: "probe-set-b",
-      probes: [],
-    },
-    {
-      __typename: "NimbusProbeSetType",
-      id: "3",
-      name: "Probe Set C",
-      slug: "probe-set-c",
-      probes: [],
-    },
-  ];
-
   it("renders as expected", async () => {
     render(<Subject />);
     await act(async () =>
@@ -85,14 +60,7 @@ describe("FormMetrics", () => {
 
   it("displays saved primary probe sets", async () => {
     const { experiment } = mockExperimentQuery("boo", {
-      primaryProbeSets: [
-        {
-          __typename: "NimbusProbeSetType",
-          id: "1",
-          name: "Probe Set A",
-          slug: "probe-set-a",
-        },
-      ],
+      primaryProbeSets: [MOCK_CONFIG.probeSets![0]],
     });
 
     render(<Subject {...{ experiment }} />);
@@ -103,16 +71,9 @@ describe("FormMetrics", () => {
 
   it("displays saved secondary probe sets", async () => {
     const { experiment } = mockExperimentQuery("boo", {
-      secondaryProbeSets: [
-        {
-          __typename: "NimbusProbeSetType",
-          id: "1",
-          name: "Probe Set A",
-          slug: "probe-set-a",
-        },
-      ],
+      secondaryProbeSets: [MOCK_CONFIG.probeSets![0]],
     });
-    render(<Subject {...{ experiment, probeSets }} />);
+    render(<Subject {...{ experiment }} />);
 
     const secondaryProbeSets = screen.getByTestId("secondary-probe-sets");
     expect(secondaryProbeSets).toHaveTextContent("Probe Set A");
@@ -124,7 +85,7 @@ describe("FormMetrics", () => {
       secondaryProbeSets: [],
     });
 
-    render(<Subject {...{ experiment, probeSets }} />);
+    render(<Subject {...{ experiment }} />);
     const primaryProbeSets = screen.getByTestId("primary-probe-sets");
     const secondaryProbeSets = screen.getByTestId("secondary-probe-sets");
 
@@ -156,7 +117,7 @@ describe("FormMetrics", () => {
       secondaryProbeSets: [],
     });
 
-    render(<Subject {...{ experiment, probeSets }} />);
+    render(<Subject {...{ experiment }} />);
 
     const primaryProbeSets = screen.getByTestId("primary-probe-sets");
     const secondaryProbeSets = screen.getByTestId("secondary-probe-sets");
@@ -189,7 +150,7 @@ describe("FormMetrics", () => {
       secondaryProbeSets: [],
     });
 
-    render(<Subject {...{ experiment, probeSets }} />);
+    render(<Subject {...{ experiment }} />);
 
     const primaryProbeSets = screen.getByTestId("primary-probe-sets");
 

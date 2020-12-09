@@ -18,6 +18,8 @@ storiesOf("components/FormMetrics", module)
     <Subject
       submitErrors={{
         "*": ["Big bad server thing broke!"],
+        primaryProbeSetIds: ["You primary probed the wrong bear."],
+        secondaryProbeSetIds: ["You secondary probed the wrong bear."],
       }}
       {...{ onSave, onNext }}
     />
