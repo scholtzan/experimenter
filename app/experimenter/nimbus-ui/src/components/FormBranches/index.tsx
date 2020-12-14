@@ -8,7 +8,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 
-import { useExitWarning } from "../../hooks";
+import { useExitConfirm, useExitWarning } from "../../hooks";
 import { getExperiment_experimentBySlug } from "../../types/getExperiment";
 import {
   getConfig_nimbusConfig,
@@ -117,12 +117,7 @@ export const FormBranches = ({
     }
   };
 
-  const handleNextClick = (
-    ev: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    ev.preventDefault();
-    onNext();
-  };
+  const handleNextClick = useExitConfirm(isDirtyUnsaved, onNext);
 
   const commonBranchProps = {
     lastSubmitTime,

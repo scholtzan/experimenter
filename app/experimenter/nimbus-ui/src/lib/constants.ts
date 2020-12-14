@@ -8,3 +8,6 @@ export const UNKNOWN_ERROR =
   "Sorry, an error occurred but we don't know why. We're looking into it.";
 export const SUBMIT_ERROR =
   "Sorry, an error occurred while submitting. Please try again.";
+
+export const EXIT_CONFIRMATION =
+  "You have unsaved Experiment changes. Are you sure you want to leave?";

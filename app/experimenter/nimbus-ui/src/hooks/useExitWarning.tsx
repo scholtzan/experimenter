@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import { useEffect, useState } from "react";
+import { EXIT_CONFIRMATION } from "../lib/constants";
 
 /**
  * Hook to trigger a browser dialog when a user attempts to exit the page.
@@ -27,16 +28,13 @@ import { useEffect, useState } from "react";
  * );
  */
 
-export const exitMessage =
-  "You have unsaved Experiment changes. Are you sure you want to leave?";
-
 export const exitHandler = (event: BeforeUnloadEvent) => {
   event.preventDefault();
 
   // Some browsers support custom message,
   // but for others these are just `true`
-  event.returnValue = exitMessage;
-  return exitMessage;
+  event.returnValue = EXIT_CONFIRMATION;
+  return EXIT_CONFIRMATION;
 };
 
 export function useExitWarning(init = false): (value: boolean) => void {

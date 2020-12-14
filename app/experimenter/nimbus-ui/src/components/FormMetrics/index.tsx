@@ -8,7 +8,7 @@ import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 import { getExperiment } from "../../types/getExperiment";
 import { getConfig_nimbusConfig_probeSets } from "../../types/getConfig";
-import { useExitWarning } from "../../hooks";
+import { useExitConfirm, useExitWarning } from "../../hooks";
 import Select, { ActionMeta, ValueType } from "react-select";
 
 type SelectOption = { label: string; value: string };
@@ -71,13 +71,7 @@ const FormMetrics = ({
     selectedSecondaryProbeSetsIds,
   ]);
 
-  const handleNext = useCallback(
-    (ev: React.FormEvent) => {
-      ev.preventDefault();
-      onNext!(ev);
-    },
-    [onNext],
-  );
+  const handleNext = useExitConfirm(isDirtyUnsaved, onNext!);
 
   const handlePrimaryProbeSetsChange = (
     selectedOptions: SelectOption[] | null,

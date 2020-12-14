@@ -7,7 +7,7 @@ import { useForm, ValidationRules } from "react-hook-form";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 import { getExperiment } from "../../types/getExperiment";
-import { useExitWarning } from "../../hooks";
+import { useExitConfirm, useExitWarning } from "../../hooks";
 import { useConfig } from "../../hooks/useConfig";
 import InlineErrorIcon from "../InlineErrorIcon";
 
@@ -61,13 +61,7 @@ const FormOverview = ({
     [onCancel],
   );
 
-  const handleNext = useCallback(
-    (ev: React.FormEvent) => {
-      ev.preventDefault();
-      onNext!(ev);
-    },
-    [onNext],
-  );
+  const handleNext = useExitConfirm(isDirtyUnsaved, onNext!);
 
   const nameValidated = (
     name: string,
