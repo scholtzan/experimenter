@@ -27,3 +27,20 @@ export const getTableDisplayType = (
 
   return displayType;
 };
+
+export const humanDate = (date: string | number): string => {
+  return new Date(date).toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+export const stringDateSubtract = (dateA: string, dateB: string): number => {
+  const DAY = 86400000; // Number of milliseconds in a day
+  const dateAConverted = +new Date(dateA);
+  const dateBConverted = +new Date(dateB);
+  const dateDifference = Math.abs(dateAConverted - dateBConverted);
+
+  return Math.round(dateDifference / DAY);
+};

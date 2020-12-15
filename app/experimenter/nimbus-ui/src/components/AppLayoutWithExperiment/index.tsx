@@ -83,7 +83,7 @@ const AppLayoutWithExperiment = ({
     return <PageExperimentNotFound {...{ slug }} />;
   }
 
-  const { name } = experiment;
+  const { name, startDate, endDate } = experiment;
 
   return (
     <Layout {...{ sidebar, children, review, analysis, status }}>
@@ -96,6 +96,9 @@ const AppLayoutWithExperiment = ({
           {...{
             slug,
             name,
+            startDate,
+            endDate,
+            analysisRequired,
             status,
           }}
         />

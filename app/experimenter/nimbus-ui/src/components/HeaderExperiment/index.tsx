@@ -7,31 +7,62 @@ import React from "react";
 import { getExperiment_experimentBySlug } from "../../types/getExperiment";
 import { StatusCheck } from "../../lib/experiment";
 import "./index.scss";
+import { humanDate, stringDateSubtract } from "../../lib/visualization/utils";
 
 type HeaderExperimentProps = Pick<
   getExperiment_experimentBySlug,
-  "name" | "slug"
-> & { status: StatusCheck };
+  "name" | "slug" | "startDate" | "endDate"
+> & { status: StatusCheck; analysisRequired?: boolean };
 
-const HeaderExperiment = ({ name, slug, status }: HeaderExperimentProps) => (
-  <header className="border-bottom" data-testid="header-experiment">
-    <h1 className="h5 font-weight-normal" data-testid="header-experiment-name">
-      {name}
-    </h1>
-    <p
-      className="text-monospace text-secondary mb-1 small"
-      data-testid="header-experiment-slug"
-    >
-      {slug}
-    </p>
-    <p className="header-experiment-status position-relative mt-2 d-inline-block">
-      <StatusPill label="Draft" active={status.draft} />
-      <StatusPill label="Review" active={status.review} />
-      <StatusPill label="Live" active={status.live} />
-      <StatusPill label="Complete" active={status.complete} padded={false} />
-    </p>
-  </header>
-);
+const HeaderExperiment = ({
+  name,
+  slug,
+  startDate = "",
+  endDate = "",
+  analysisRequired = false,
+  status,
+}: HeaderExperimentProps) => {
+  return (
+    <header className="border-bottom" data-testid="header-experiment">
+      <div className="row">
+        <div className="col-md-6">
+          <h1
+            className="h5 font-weight-normal"
+            data-testid="header-experiment-name"
+          >
+            {name}
+          </h1>
+          <p
+            className="text-monospace text-secondary mb-1 small"
+            data-testid="header-experiment-slug"
+          >
+            {slug}
+          </p>
+          <p className="header-experiment-status position-relative mt-2 d-inline-block">
+            <StatusPill label="Draft" active={status.draft} />
+            <StatusPill label="Review" active={status.review} />
+            <StatusPill label="Live" active={status.live} />
+            <StatusPill
+              label="Complete"
+              active={status.complete}
+              padded={false}
+            />
+          </p>
+        </div>
+        {analysisRequired ? (
+          <div className="text-right col-md-6">
+            <span className="font-weight-bold">{humanDate(startDate!)} </span>
+            to
+            <span className="font-weight-bold"> {humanDate(endDate!)} </span>(
+            {stringDateSubtract(endDate!, startDate!)} days)
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+    </header>
+  );
+};
 
 const StatusPill = ({
   label,

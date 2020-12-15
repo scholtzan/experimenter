@@ -15,6 +15,9 @@ describe("HeaderExperiment", () => {
       <HeaderExperiment
         name={experiment.name}
         slug={experiment.slug}
+        startDate={experiment.startDate}
+        endDate={experiment.endDate}
+        analysisRequired
         status={mockGetStatus(experiment.status)}
       />,
     );
